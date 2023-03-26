@@ -130,7 +130,7 @@ def main(dataset_path, folder_name, use_blip):
     elif folder_name == "Style" or "Background" or "Object":
         conv_dim = 8
         network_dim = 8
-    elif folder_name == "Full"
+    elif folder_name == "Full":
         conv_dim = 16
         network_dim = 16
         
