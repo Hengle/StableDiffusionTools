@@ -124,15 +124,15 @@ def main(dataset_path, folder_name, use_blip):
     fine_tune_toml_file = create_toml_config(img_dst, json_path, folder_name, resolution=512, batch_size=1, training_type=use_type)
     create_batch_file(img_dst, fine_tune_toml_file, folder_name, num_images, training_type=use_type, num_cpu=1, lr=2e-6, train_step=10000)
     
-    #if folder_name == "Chara":
-    #    conv_dim = 1
-    #    network_dim = 1
-    #elif folder_name == "Style" or "Background" or "Full" or "Object":
-    #    conv_dim = 4
-    #    #network_dim = 4
-    
-    conv_dim = 8
-    network_dim = 8
+    if folder_name == "Chara":
+        conv_dim = 1
+        network_dim = 1
+    elif folder_name == "Style" or "Background" or "Object":
+        conv_dim = 8
+        network_dim = 8
+    elif folder_name == "Full"
+        conv_dim = 16
+        network_dim = 16
         
     use_type = "LoRA"
     lora_toml_file = create_toml_config(img_dst, json_path, folder_name, resolution=512, batch_size=32, training_type=use_type)
