@@ -167,7 +167,6 @@ def filter_layers(state_dict: dict[str, torch.Tensor], lwei: list[float]) -> dic
             if block in key:
                 ratio = lwei[i]
                 if ratio != 0:
-                    print(block)
                     filtered_state_dict[layer_name] = weight * math.sqrt(abs(ratio))
     return filtered_state_dict
 
@@ -197,7 +196,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input", type=str, help="Path to input file. Must be a .safetensors or .ckpt file.")
     parser.add_argument("output", type=str, help="Path to output file. Must be a .safetensors or .ckpt file.")
-    parser.add_argument("--weight", type=str, help="The weight ratios for each block.")
+    parser.add_argument("weight", type=str, help="The weight ratios for each block.")
     args = parser.parse_args()
 
     if not args.input or not args.output:
