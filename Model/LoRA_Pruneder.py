@@ -152,11 +152,12 @@ def convert_diffusers_name_to_compvis(key):
     return key
 
 def expand_ratios(ratios: list[float]) -> list[float]:
-    if len(ratios) == 17 or 25:
-        expanded_ratios = [ratios[0]] + [1] + ratios[1:3] + [1] + ratios[3:5] + [1] + ratios[5:7] + [1, 1, 1] + [ratios[7]] + [1, 1, 1] + ratios[8:]
+    if len(ratios) == 17:
+        return [ratios[0]] + [1] + ratios[1:3] + [1] + ratios[3:5] + [1] + ratios[5:7] + [1, 1, 1] + [ratios[7]] + [1, 1, 1] + ratios[8:]
+    elif len(ratios) == 26:
+        return ratios
     else:
         raise ValueError("权重长度错误.")
-    return expanded_ratios + [1] * (25 - len(expanded_ratios))
 
 def filter_layers(state_dict: dict[str, torch.Tensor], lwei: list[float]) -> dict[str, torch.Tensor]:
     filtered_state_dict = {}
