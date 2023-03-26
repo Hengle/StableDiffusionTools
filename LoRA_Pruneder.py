@@ -177,6 +177,8 @@ def parse_weight_input(ratios):
 
 def main(input: str, output: str, ratios: str):
     input = Path(input)
+    if not output.endswith(".safetensors"):
+        output += ".ckpt"
     output = Path(output)
 
     input_lora = load_model(input, "cpu")
