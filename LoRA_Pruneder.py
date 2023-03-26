@@ -179,10 +179,6 @@ def main(input: str, output: str, ratios: str):
     input = Path(input)
     output = Path(output)
 
-    if not output.suffix == ".safetensors" and not output.suffix == ".ckpt":
-        raise ValueError(
-            f"Output file must be a `.safetensors` or `.ckpt` file. Got {output.suffix}")
-
     input_lora = load_model(input, "cpu")
     
     expanded_ratios = expand_ratios(parse_weight_input(ratios))
