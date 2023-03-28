@@ -138,7 +138,7 @@ def main(dataset_path, folder_name, use_blip):
     network_dim = 128
     
     use_type = "LoRA"
-    lora_toml_file = create_toml_config(img_dst, json_path, folder_name, resolution=512, batch_size=32, training_type=use_type)
+    lora_toml_file = create_toml_config(img_dst, json_path, folder_name, resolution=512, batch_size=28, training_type=use_type)
     create_batch_file(img_dst, lora_toml_file, folder_name, num_images, training_type=use_type, num_cpu=1, lr=1e-4, train_step=800, network_dim=network_dim, conv_dim=conv_dim)
     
     use_type = "LyCORIS"
