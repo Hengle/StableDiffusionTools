@@ -92,7 +92,7 @@ def create_batch_file(img_dst, toml_file, folder_name, num_images, training_type
     elif training_type == "FineTune":
         train_script = "fine_tune"
         
-    batch_content = f"""D:/sd-scripts/venv/Scripts/activate.bat && accelerate launch --num_cpu_threads_per_process {num_cpu} {sd_scripts_path}{train_script}.py --pretrained_model_name_or_path={base_model} --output_dir="D:/DataSet/{folder_name}/model" --output_name={folder_name}{img_dst.name}_{training_type}cosine --dataset_config="{toml_file}" --save_model_as=ckpt --learning_rate={lr} --max_train_steps={train_step} --use_8bit_adam --xformers --gradient_checkpointing --mixed_precision=fp16 --save_every_n_epochs={save_every_n_epochs} --clip_skip=2 --cache_latents --lr_scheduler="cosine" """
+    batch_content = f"""D:/sd-scripts/venv/Scripts/activate.bat && accelerate launch --num_cpu_threads_per_process {num_cpu} {sd_scripts_path}{train_script}.py --pretrained_model_name_or_path={base_model} --output_dir="D:/DataSet/{folder_name}/model" --output_name={folder_name}{img_dst.name}_{training_type}cosine_with_restarts --dataset_config="{toml_file}" --save_model_as=ckpt --learning_rate={lr} --max_train_steps={train_step} --optimizer_type Lion --xformers --gradient_checkpointing --mixed_precision=fp16 --save_every_n_epochs={save_every_n_epochs} --clip_skip=2 --cache_latents --lr_scheduler="cosine_with_restarts" --sample_every_n_epochs 1 --sample_prompts "D:\DataSet\SamplePrompt.txt" --sample_sampler ddim """
     #学习率动态调整方法有 linear, cosine, cosine_with_restarts, polynomial, constant, constant_with_warmup
     if training_type == "LoRA" or "LyCORIS":
         batch_content += f"""--network_module=networks.lora --network_train_unet_only --network_dim {network_dim} --network_alpha 1 --network_args "conv_dim={conv_dim}" "conv_alpha=1" "algo=lora" """
@@ -124,23 +124,26 @@ def main(dataset_path, folder_name, use_blip):
     fine_tune_toml_file = create_toml_config(img_dst, json_path, folder_name, resolution=512, batch_size=1, training_type=use_type)
     create_batch_file(img_dst, fine_tune_toml_file, folder_name, num_images, training_type=use_type, num_cpu=1, lr=2e-6, train_step=10000)
     
-    if folder_name == "Chara":
-        conv_dim = 1
-        network_dim = 1
-    elif folder_name == "Style" or "Background" or "Object":
-        conv_dim = 8
-        network_dim = 8
-    elif folder_name == "Full":
-        conv_dim = 16
-        network_dim = 16
-        
+    #if folder_name == "Chara":
+    #    conv_dim = 1
+    #    network_dim = 1
+    #elif folder_name == "Style" or "Background" or "Object":
+    #    conv_dim = 8
+    #    network_dim = 8
+    #elif folder_name == "Full":
+    #    conv_dim = 16
+    #    network_dim = 16
+    
+    conv_dim = 128
+    network_dim = 128
+    
     use_type = "LoRA"
     lora_toml_file = create_toml_config(img_dst, json_path, folder_name, resolution=512, batch_size=32, training_type=use_type)
-    create_batch_file(img_dst, lora_toml_file, folder_name, num_images, training_type=use_type, num_cpu=1, lr=5e-4, train_step=800, network_dim=network_dim, conv_dim=conv_dim)
+    create_batch_file(img_dst, lora_toml_file, folder_name, num_images, training_type=use_type, num_cpu=1, lr=1e-4, train_step=800, network_dim=network_dim, conv_dim=conv_dim)
     
     use_type = "LyCORIS"
     lora_toml_file = create_toml_config(img_dst, json_path, folder_name, resolution=512, batch_size=16, training_type=use_type)
-    create_batch_file(img_dst, lora_toml_file, folder_name, num_images, training_type=use_type, num_cpu=1, lr=5e-4, train_step=800, network_dim=network_dim, conv_dim=conv_dim)
+    create_batch_file(img_dst, lora_toml_file, folder_name, num_images, training_type=use_type, num_cpu=1, lr=1e-4, train_step=800, network_dim=network_dim, conv_dim=conv_dim)
 
 if __name__ == "__main__":
     # 解析命令行参数
@@ -150,7 +153,7 @@ if __name__ == "__main__":
     parser.add_argument('--blip', action='store_true', help='使用 blip 生成prompt')
     args = parser.parse_args()
 
-    base_model = "D:/stable-diffusion-webui/models/Stable-diffusion/animefull-latest.ckpt"
+    base_model = "D:/stable-diffusion-webui/models/_TempModel/NovelAI/animefull-latest.ckpt"
     sd_scripts_path = "D:/sd-scripts/"
 
     dataset_path = args.path
